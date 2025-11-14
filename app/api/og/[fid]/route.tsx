@@ -78,8 +78,9 @@ export async function GET(
   const avatarSize = 112;
   const fcPurple = "#7C5CFF";
 
+  // kartu sedikit lebih kecil supaya aman dari crop
   const CARD_WIDTH = 1040;
-  const CARD_HEIGHT = 540;
+  const CARD_HEIGHT = 500;
 
   return new ImageResponse(
     (
@@ -97,13 +98,13 @@ export async function GET(
           color: "white",
         }}
       >
-        {/* CARD tengah */}
+        {/* CARD di tengah, dengan margin atas/bawah cukup besar */}
         <div
           style={{
             width: CARD_WIDTH,
             height: CARD_HEIGHT,
             borderRadius: 40,
-            padding: "40px 44px 32px 44px",
+            padding: "36px 44px 28px 44px",
             background:
               "radial-gradient(circle at 50% 0%, #A78BFA 0, #7C5CFF 38%, #5B21FF 80%)",
             boxShadow: "0 24px 60px rgba(15,23,42,0.9)",
@@ -170,30 +171,33 @@ export async function GET(
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 2,
+                gap: 3,
               }}
             >
+              {/* nama lebih besar */}
               <div
                 style={{
-                  fontSize: 24,
-                  fontWeight: 650,
-                  textShadow: "0 1px 3px rgba(15,23,42,0.8)",
+                  fontSize: 30,
+                  fontWeight: 700,
+                  textShadow: "0 1px 3px rgba(15,23,42,0.85)",
                 }}
               >
                 {displayName}
               </div>
+              {/* username lebih besar */}
               <div
                 style={{
-                  fontSize: 16,
-                  opacity: 0.95,
+                  fontSize: 18,
+                  opacity: 0.96,
                 }}
               >
                 {username}
               </div>
+              {/* fid sedikit lebih besar juga */}
               <div
                 style={{
-                  fontSize: 13,
-                  opacity: 0.8,
+                  fontSize: 15,
+                  opacity: 0.85,
                 }}
               >
                 fid {fid}
@@ -208,12 +212,12 @@ export async function GET(
               flexDirection: "column",
               alignItems: "center",
               gap: 4,
-              marginTop: 4,
+              marginTop: 2,
             }}
           >
             <div
               style={{
-                fontSize: 32,
+                fontSize: 30,
                 fontWeight: 750,
                 letterSpacing: 0.7,
                 textShadow: "0 2px 6px rgba(15,23,42,0.7)",
@@ -223,7 +227,7 @@ export async function GET(
             </div>
             <div
               style={{
-                fontSize: 18,
+                fontSize: 17,
                 opacity: 0.96,
               }}
             >
@@ -237,7 +241,7 @@ export async function GET(
               display: "flex",
               gap: 18,
               width: "100%",
-              marginTop: 10,
+              marginTop: 8,
             }}
           >
             {statItems.map((item) => (
@@ -288,8 +292,8 @@ export async function GET(
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
-              marginTop: 18,
-              fontSize: 16,
+              marginTop: 14,
+              fontSize: 15,
               opacity: 0.97,
             }}
           >
@@ -304,7 +308,7 @@ export async function GET(
             </div>
             <div
               style={{
-                fontSize: 15,
+                fontSize: 14,
                 opacity: 0.9,
               }}
             >
@@ -314,7 +318,7 @@ export async function GET(
 
           <div
             style={{
-              fontSize: 13,
+              fontSize: 12.5,
               opacity: 0.84,
               marginTop: 2,
               textAlign: "center",
