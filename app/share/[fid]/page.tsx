@@ -4,15 +4,11 @@ import type { Metadata, ResolvingMetadata } from "next";
 const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ?? "https://my-base-week.vercel.app";
 
-type Props = {
-  params: { fid: string };
-};
-
 export async function generateMetadata(
-  { params }: Props,
+  { params }: { params: Promise<{ fid: string }> },
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { fid } = params;
+  const { fid } = await params;
 
   const ogImageUrl = `${APP_URL}/api/og/${fid}`;
   const title = `Farcaster Weekly Stats – fid ${fid}`;
@@ -41,8 +37,12 @@ export async function generateMetadata(
   };
 }
 
-export default function SharePage({ params }: Props) {
-  const { fid } = params;
+export default async function SharePage({
+  params,
+}: {
+  params: Promise<{ fid: string }>;
+}) {
+  const { fid } = await params;
 
   return (
     <div
