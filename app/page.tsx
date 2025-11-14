@@ -222,7 +222,7 @@ function StatsCard({
     <div className={styles.card}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>My Base Week</h1>
+          <h1 className={styles.title}>Weekly Stats</h1>
           <p className={styles.subtitle}>
             Last {stats.days} days on Farcaster
           </p>

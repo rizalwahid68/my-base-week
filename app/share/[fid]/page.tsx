@@ -21,10 +21,10 @@ export async function generateMetadata(
     version: minikitConfig.miniapp.version,
     imageUrl: ogImageUrl,
     button: {
-      title: "Launch My Base Week",
+      title: "Check Your Weekly Stats",
       action: {
         type: "launch_frame",
-        name: "Launch My Base Week",
+        name: "Check Your Weekly Stats",
         url: minikitConfig.miniapp.homeUrl,
         splashImageUrl: minikitConfig.miniapp.splashImageUrl,
         splashBackgroundColor: minikitConfig.miniapp.splashBackgroundColor,
