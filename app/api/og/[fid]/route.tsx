@@ -58,21 +58,12 @@ export async function GET(
   const engagement = stats?.engagementScore ?? 0;
 
   const displayName =
-    stats?.user?.displayName ??
-    stats?.userDisplayName ??
-    "Farcaster user";
+    stats?.user?.displayName ?? stats?.userDisplayName ?? "Farcaster user";
 
-  const usernameRaw =
-    stats?.user?.username ??
-    stats?.userName ??
-    "";
-
+  const usernameRaw = stats?.user?.username ?? stats?.userName ?? "";
   const username = usernameRaw ? `@${usernameRaw}` : `fid ${fid}`;
 
-  const pfpUrl =
-    stats?.user?.pfpUrl ??
-    stats?.pfpUrl ??
-    null;
+  const pfpUrl = stats?.user?.pfpUrl ?? stats?.pfpUrl ?? null;
 
   const initial =
     (displayName || usernameRaw || "F").charAt(0).toUpperCase() || "F";
@@ -84,8 +75,11 @@ export async function GET(
     { label: "Replies", value: totalReplies },
   ];
 
-  const avatarSize = 120;
+  const avatarSize = 112;
   const fcPurple = "#7C5CFF";
+
+  const CARD_WIDTH = 1040;
+  const CARD_HEIGHT = 540;
 
   return new ImageResponse(
     (
@@ -93,35 +87,39 @@ export async function GET(
         style={{
           width: 1200,
           height: 630,
-          background:
-            "radial-gradient(circle at 50% 0%, #A78BFA 0, #7C5CFF 40%, #5B21FF 80%)",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
           alignItems: "center",
-          // base font: modern sans (mirip Canva)
+          justifyContent: "center",
+          background:
+            "radial-gradient(circle at 50% 0%, #1D1040 0, #020617 45%, #020617 100%)",
           fontFamily:
             '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
           color: "white",
         }}
       >
-        {/* kontainer utama */}
+        {/* CARD tengah */}
         <div
           style={{
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
+            borderRadius: 40,
+            padding: "40px 44px 32px 44px",
+            background:
+              "radial-gradient(circle at 50% 0%, #A78BFA 0, #7C5CFF 38%, #5B21FF 80%)",
+            boxShadow: "0 24px 60px rgba(15,23,42,0.9)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 24,
-            width: 960,
+            justifyContent: "space-between",
           }}
         >
-          {/* avatar + identitas */}
+          {/* Avatar + identitas */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 12,
+              gap: 14,
             }}
           >
             <div
@@ -130,7 +128,7 @@ export async function GET(
                 padding: 4,
                 borderRadius: 9999,
                 background: `radial-gradient(circle at 30% 0%, ${fcPurple}, #4C1D95)`,
-                boxShadow: `0 0 32px rgba(124,92,255,0.9)`,
+                boxShadow: `0 0 28px rgba(124,92,255,0.9)`,
               }}
             >
               {pfpUrl ? (
@@ -177,72 +175,67 @@ export async function GET(
             >
               <div
                 style={{
-                  display: "flex",
                   fontSize: 24,
                   fontWeight: 650,
                   textShadow: "0 1px 3px rgba(15,23,42,0.8)",
                 }}
               >
-                <span>{displayName}</span>
+                {displayName}
               </div>
               <div
                 style={{
-                  display: "flex",
-                  fontSize: 17,
+                  fontSize: 16,
                   opacity: 0.95,
                 }}
               >
-                <span>{username}</span>
+                {username}
               </div>
               <div
                 style={{
-                  display: "flex",
                   fontSize: 13,
-                  opacity: 0.82,
+                  opacity: 0.8,
                 }}
               >
-                <span>fid {fid}</span>
+                fid {fid}
               </div>
             </div>
           </div>
 
-          {/* title – modern, bold, sedikit letter spacing */}
+          {/* Title */}
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 6,
-              marginTop: 6,
+              gap: 4,
+              marginTop: 4,
             }}
           >
             <div
               style={{
-                display: "flex",
-                fontSize: 34,
+                fontSize: 32,
                 fontWeight: 750,
-                letterSpacing: 0.8,
+                letterSpacing: 0.7,
                 textShadow: "0 2px 6px rgba(15,23,42,0.7)",
               }}
             >
-              <span>Farcaster Weekly Stats</span>
+              Farcaster Weekly Stats
             </div>
             <div
               style={{
-                display: "flex",
                 fontSize: 18,
                 opacity: 0.96,
               }}
             >
-              <span>Last {days} days on Farcaster</span>
+              Last {days} days on Farcaster
             </div>
           </div>
 
-          {/* grid 4 stats */}
+          {/* 4 stats */}
           <div
             style={{
               display: "flex",
-              gap: 20,
+              gap: 18,
               width: "100%",
               marginTop: 10,
             }}
@@ -251,54 +244,52 @@ export async function GET(
               <div
                 key={item.label}
                 style={{
+                  flex: 1,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  flex: 1,
-                  padding: "20px 22px",
-                  borderRadius: 26,
+                  padding: "18px 20px",
+                  borderRadius: 24,
                   background:
-                    "linear-gradient(145deg, rgba(76,29,149,0.95), rgba(55,20,130,0.85))",
+                    "linear-gradient(145deg, rgba(76,29,149,0.96), rgba(55,20,130,0.9))",
                   border: "1px solid rgba(221,214,254,0.9)",
-                  boxShadow: "0 18px 45px rgba(55,20,130,0.9)",
+                  boxShadow: "0 14px 35px rgba(55,20,130,0.9)",
                 }}
               >
                 <div
                   style={{
-                    display: "flex",
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: 500,
                     letterSpacing: 0.4,
                     opacity: 0.94,
                     marginBottom: 6,
                   }}
                 >
-                  <span>{item.label}</span>
+                  {item.label}
                 </div>
                 <div
                   style={{
-                    display: "flex",
-                    fontSize: 36,
+                    fontSize: 34,
                     fontWeight: 730,
                     lineHeight: 1.1,
                     textShadow: "0 1px 4px rgba(15,23,42,0.7)",
                   }}
                 >
-                  <span>{item.value}</span>
+                  {item.value}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* engagement + footer */}
+          {/* Footer */}
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "center",
               width: "100%",
               marginTop: 18,
-              fontSize: 16.5,
+              fontSize: 16,
               opacity: 0.97,
             }}
           >
@@ -313,24 +304,23 @@ export async function GET(
             </div>
             <div
               style={{
-                display: "flex",
                 fontSize: 15,
                 opacity: 0.9,
               }}
             >
-              <span>my-base-week · base mini app</span>
+              my-base-week · base mini app
             </div>
           </div>
 
           <div
             style={{
-              display: "flex",
-              fontSize: 14,
-              opacity: 0.85,
-              marginTop: 4,
+              fontSize: 13,
+              opacity: 0.84,
+              marginTop: 2,
+              textAlign: "center",
             }}
           >
-            <span>Open the mini app to see full details</span>
+            Open the mini app to see full details
           </div>
         </div>
       </div>
