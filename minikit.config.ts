@@ -19,27 +19,25 @@ export const minikitConfig = {
     description:
       "See your weekly Farcaster stats inside Base App: casts, likes, recasts, replies, and your top cast.",
 
-    // asset masih pakai nama default, nanti bisa kamu ganti kalau sudah siap gambar
-    screenshotUrls: [`${ROOT_URL}/screenshot-portrait.png`],
-    iconUrl: `${ROOT_URL}/blue-icon.png`,
-    splashImageUrl: `${ROOT_URL}/blue-hero.png`,
-    splashBackgroundColor: "#020617",
+    // 🔽 SESUAIKAN DENGAN FILE DI `public`
+    iconUrl: `${ROOT_URL}/icon.png`,
+    splashImageUrl: `${ROOT_URL}/splash.png`,
+    screenshotUrls: [`${ROOT_URL}/screenshot.png`],
+    heroImageUrl: `${ROOT_URL}/hero.png`,
+    ogImageUrl: `${ROOT_URL}/hero.png`,
 
+    splashBackgroundColor: "#020617",
     homeUrl: ROOT_URL,
     webhookUrl: `${ROOT_URL}/api/webhook`,
 
     primaryCategory: "social",
     tags: ["farcaster", "analytics", "base-app", "stats"],
 
-    heroImageUrl: `${ROOT_URL}/blue-hero.png`,
-
-    // sudah < 30 karakter
+    // < 30 karakter (syarat Base)
     tagline: "Your Farcaster week",
-    ogTitle: "My Base Week",
-
+    ogTitle: "My Base Week stats",
     ogDescription:
       "See your last 7 days of Farcaster activity in one simple Base mini app.",
-    ogImageUrl: `${ROOT_URL}/blue-hero.png`,
   },
 } as const;
 
