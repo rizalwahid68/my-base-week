@@ -78,9 +78,9 @@ export async function GET(
   const avatarSize = 112;
   const fcPurple = "#7C5CFF";
 
-  // kartu sedikit lebih kecil supaya aman dari crop
-  const CARD_WIDTH = 1040;
-  const CARD_HEIGHT = 500;
+  // kartu dibuat sedikit lebih kecil supaya aman dari crop kiri-kanan dan atas-bawah
+  const CARD_WIDTH = 1000;
+  const CARD_HEIGHT = 480;
 
   return new ImageResponse(
     (
@@ -98,13 +98,13 @@ export async function GET(
           color: "white",
         }}
       >
-        {/* CARD di tengah, dengan margin atas/bawah cukup besar */}
+        {/* CARD tengah dengan margin besar di sekelilingnya */}
         <div
           style={{
             width: CARD_WIDTH,
             height: CARD_HEIGHT,
             borderRadius: 40,
-            padding: "36px 44px 28px 44px",
+            padding: "32px 40px 26px 40px",
             background:
               "radial-gradient(circle at 50% 0%, #A78BFA 0, #7C5CFF 38%, #5B21FF 80%)",
             boxShadow: "0 24px 60px rgba(15,23,42,0.9)",
@@ -174,7 +174,7 @@ export async function GET(
                 gap: 3,
               }}
             >
-              {/* nama lebih besar */}
+              {/* nama besar */}
               <div
                 style={{
                   fontSize: 30,
@@ -184,7 +184,7 @@ export async function GET(
               >
                 {displayName}
               </div>
-              {/* username lebih besar */}
+              {/* username */}
               <div
                 style={{
                   fontSize: 18,
@@ -193,7 +193,7 @@ export async function GET(
               >
                 {username}
               </div>
-              {/* fid sedikit lebih besar juga */}
+              {/* fid */}
               <div
                 style={{
                   fontSize: 15,
@@ -285,46 +285,44 @@ export async function GET(
             ))}
           </div>
 
-          {/* Footer */}
+          {/* Footer – semuanya di TENGAH, jauh dari pinggir */}
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              flexDirection: "column",
               alignItems: "center",
+              gap: 6,
               width: "100%",
               marginTop: 14,
-              fontSize: 15,
-              opacity: 0.97,
             }}
           >
             <div
               style={{
-                display: "flex",
-                fontWeight: 500,
+                fontSize: 16,
+                fontWeight: 600,
+                opacity: 0.97,
               }}
             >
-              <span>Engagement score&nbsp;</span>
-              <span style={{ fontWeight: 730 }}>{engagement}</span>
+              Engagement score{" "}
+              <span style={{ fontWeight: 750 }}>{engagement}</span>
             </div>
             <div
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 opacity: 0.9,
               }}
             >
               my-base-week · base mini app
             </div>
-          </div>
-
-          <div
-            style={{
-              fontSize: 12.5,
-              opacity: 0.84,
-              marginTop: 2,
-              textAlign: "center",
-            }}
-          >
-            Open the mini app to see full details
+            <div
+              style={{
+                fontSize: 12.5,
+                opacity: 0.84,
+                textAlign: "center",
+              }}
+            >
+              Open the mini app to see full details
+            </div>
           </div>
         </div>
       </div>
