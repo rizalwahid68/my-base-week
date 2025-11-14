@@ -1,4 +1,4 @@
-const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY;
+const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY!;
 
 if (!NEYNAR_API_KEY) {
   throw new Error("Missing NEYNAR_API_KEY env var");
