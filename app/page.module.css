@@ -1,0 +1,126 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050510;
+  color: #f9fafb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.message {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.errorBox {
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(248, 113, 113, 0.6);
+  background: rgba(127, 29, 29, 0.4);
+  max-width: 320px;
+  text-align: center;
+}
+
+.errorTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.errorText {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 20px;
+  background: radial-gradient(circle at top, #1f2937 0, #050510 55%);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.statBox {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.statLabel {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.topCast {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 16px;
+  padding-top: 10px;
+  font-size: 12px;
+}
+
+.topCastLabel {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.topCastText {
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.topCastMeta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.emoji {
+  font-size: 12px;
+}
+
+.topCastEmpty {
+  font-size: 11px;
+  opacity: 0.75;
+}
