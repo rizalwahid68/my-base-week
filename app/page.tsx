@@ -123,11 +123,16 @@ export default function Home() {
     try {
       const text = buildShareText(stats);
 
+      // URL share spesifik per FID
+      const shareUrl = `${APP_URL}/share/${stats.fid}`;
+      
       const params = new URLSearchParams();
-      params.set("text", text);
-      // embed mini app supaya frame muncul di bawah cast
-      params.append("embeds[]", APP_URL);
-
+      // teks + link (kalau embed gagal, link tetap ada di cast)
+      params.set("text", `${text}\n\n${shareUrl}`);
+      
+      // embed URL share agar Warpcast/Base pakai OG image kita
+      params.append("embeds[]", shareUrl);
+      
       const composerUrl = `https://warpcast.com/~/compose?${params.toString()}`;
 
       // ✅ gunakan hook MiniKit untuk buka URL di Base App
