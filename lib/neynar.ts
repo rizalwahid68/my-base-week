@@ -1,27 +1,40 @@
 // lib/neynar.ts
 
-// Pakai `as string` supaya TypeScript tahu ini pasti string.
-// Kalau env belum di-set, kita lempar error.
 const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY as string;
 
 if (!NEYNAR_API_KEY) {
   throw new Error("Missing NEYNAR_API_KEY env var");
 }
 
+type NeynarAuthor = {
+  fid?: number;
+  username?: string;
+  display_name?: string;
+  pfp_url?: string;
+  pfp?: { url?: string };
+};
+
+type NeynarReactions = {
+  likes_count?: number;
+  likes?:
+    | Array<{ count?: number }>
+    | {
+        count?: number;
+      };
+  recasts_count?: number;
+  recasts?:
+    | Array<{ count?: number }>
+    | {
+        count?: number;
+      };
+};
+
 export type NeynarCast = {
   timestamp: string;
   text: string;
   hash: string;
-  author?: {
-    fid?: number;
-    username?: string;
-    display_name?: string;
-    pfp_url?: string;
-    pfp?: { url?: string };
-  };
-  // bentuk object reactions di Neynar lumayan fleksibel,
-  // jadi kita biarkan unknown dan kita parse manual.
-  reactions?: unknown;
+  author?: NeynarAuthor;
+  reactions?: NeynarReactions | null;
   replies?: {
     count?: number;
   };
@@ -57,28 +70,36 @@ export type WeeklyStats = {
 };
 
 // ---------- helper kecil buat ekstrak like / recast ----------
-function getReactionCounts(reactions: unknown): { likes: number; recasts: number } {
+function getReactionCounts(
+  reactions?: NeynarReactions | null
+): { likes: number; recasts: number } {
   if (!reactions) return { likes: 0, recasts: 0 };
 
-  const r: any = reactions;
   let likes = 0;
   let recasts = 0;
 
-  // beberapa bentuk yang mungkin muncul dari Neynar
-  if (typeof r.likes_count === "number") {
-    likes = r.likes_count;
-  } else if (Array.isArray(r.likes)) {
-    likes = r.likes.length;
-  } else if (typeof r.likes?.count === "number") {
-    likes = r.likes.count;
+  if (typeof reactions.likes_count === "number") {
+    likes = reactions.likes_count;
+  } else if (Array.isArray(reactions.likes)) {
+    likes = reactions.likes.length;
+  } else if (
+    reactions.likes &&
+    !Array.isArray(reactions.likes) &&
+    typeof reactions.likes.count === "number"
+  ) {
+    likes = reactions.likes.count;
   }
 
-  if (typeof r.recasts_count === "number") {
-    recasts = r.recasts_count;
-  } else if (Array.isArray(r.recasts)) {
-    recasts = r.recasts.length;
-  } else if (typeof r.recasts?.count === "number") {
-    recasts = r.recasts.count;
+  if (typeof reactions.recasts_count === "number") {
+    recasts = reactions.recasts_count;
+  } else if (Array.isArray(reactions.recasts)) {
+    recasts = reactions.recasts.length;
+  } else if (
+    reactions.recasts &&
+    !Array.isArray(reactions.recasts) &&
+    typeof reactions.recasts.count === "number"
+  ) {
+    recasts = reactions.recasts.count;
   }
 
   return { likes, recasts };
@@ -143,10 +164,10 @@ export async function getWeeklyStats(
 
     // Ambil info profil dari cast pertama (sekali saja)
     if (!userDisplayName && casts[0]?.author) {
-      const a = casts[0].author as any;
-      userDisplayName = a.display_name ?? null;
-      userName = a.username ?? null;
-      pfpUrl = a.pfp_url ?? a.pfp?.url ?? null;
+      const a = casts[0].author;
+      userDisplayName = a?.display_name ?? null;
+      userName = a?.username ?? null;
+      pfpUrl = a?.pfp_url ?? a?.pfp?.url ?? null;
     }
 
     for (const cast of casts) {

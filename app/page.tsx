@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMiniKit } from "@coinbase/onchainkit/minikit";
+import { useMiniKit, useOpenUrl } from "@coinbase/onchainkit/minikit";
 import styles from "./page.module.css";
+
 
 type TopCast = {
   text: string;
@@ -40,10 +41,8 @@ const DEFAULT_FID = "250425";
 const APP_URL = "https://my-base-week.vercel.app";
 
 export default function Home() {
-  // pakai as any supaya kita bisa ambil sdk tanpa ribut sama TypeScript
-  const miniKit = useMiniKit() as any;
-  const { context, setFrameReady, isFrameReady } = miniKit;
-  const sdk = miniKit.sdk as any;
+  const { context, setFrameReady, isFrameReady } = useMiniKit();
+  const openUrl = useOpenUrl();
 
   const [fid, setFid] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -131,11 +130,11 @@ export default function Home() {
 
       const composerUrl = `https://warpcast.com/~/compose?${params.toString()}`;
 
-      // 1. Di dalam Base App / MiniKit → pakai sdk.actions.openUrl
-      if (sdk?.actions?.openUrl) {
-        await sdk.actions.openUrl({ url: composerUrl });
+      // ✅ gunakan hook MiniKit untuk buka URL di Base App
+      if (openUrl) {
+        openUrl(composerUrl);
       }
-      // 2. Fallback di browser biasa
+      // fallback di browser biasa
       else if (typeof window !== "undefined") {
         window.open(composerUrl, "_blank", "noopener,noreferrer");
       }
@@ -203,10 +202,10 @@ function StatsCard({
   // ✅ Handler untuk buka cast di Warpcast
   const handleTopCastClick = () => {
     if (!stats.topCast?.hash) return;
-    
+
     const castUrl = `https://warpcast.com/~/conversations/${stats.topCast.hash}`;
-    
-    // Buka di tab baru
+
+    // Buka di tab baru (browser fallback)
     if (typeof window !== "undefined") {
       window.open(castUrl, "_blank", "noopener,noreferrer");
     }
@@ -228,12 +227,13 @@ function StatsCard({
               {user.pfpUrl ? (
                 <img
                   src={user.pfpUrl}
-                  alt={user.username}
+                  alt={user.username || "User avatar"}
                   className={styles.avatar}
                 />
               ) : (
                 <div className={styles.avatarFallback}>{initial}</div>
               )}
+
             </div>
             <div className={styles.userText}>
               <span className={styles.userName}>{user.displayName}</span>
@@ -250,11 +250,10 @@ function StatsCard({
         <Stat label="Replies received" value={stats.totalReplies} />
       </div>
 
-      {/* ✅ Tambahkan onClick dan cursor pointer */}
-      <div 
+      <div
         className={styles.topCast}
         onClick={handleTopCastClick}
-        style={{ cursor: stats.topCast ? 'pointer' : 'default' }}
+        style={{ cursor: stats.topCast ? "pointer" : "default" }}
       >
         <p className={styles.topCastLabel}>Top cast of the week</p>
         {stats.topCast ? (
