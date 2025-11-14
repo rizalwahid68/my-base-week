@@ -1,12 +1,35 @@
-// lib/neynar.ts
-
-const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY!;
+const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY;
 
 if (!NEYNAR_API_KEY) {
-  throw new Error("NEYNAR_API_KEY belum diset di .env.local");
+  throw new Error("Missing NEYNAR_API_KEY env var");
 }
 
-export async function fetchUserCasts(fid: string, cursor?: string) {
+export type NeynarCast = {
+  timestamp: string;
+  text: string;
+  hash: string;
+  reactions?: {
+    likes_count?: number;
+    likes?: number;
+    recasts_count?: number;
+    recasts?: number;
+  };
+  replies?: {
+    count?: number;
+  };
+};
+
+export type NeynarFeedResponse = {
+  casts?: NeynarCast[];
+  next?: {
+    cursor?: string;
+  };
+};
+
+export async function fetchUserCasts(
+  fid: string,
+  cursor?: string
+): Promise<NeynarFeedResponse> {
   const params = new URLSearchParams({
     fid,
     limit: "50",
@@ -20,6 +43,7 @@ export async function fetchUserCasts(fid: string, cursor?: string) {
       headers: {
         "x-api-key": NEYNAR_API_KEY,
       },
+      cache: "no-store",
     }
   );
 
@@ -27,5 +51,6 @@ export async function fetchUserCasts(fid: string, cursor?: string) {
     throw new Error(`Neynar error: ${res.status}`);
   }
 
-  return res.json(); // any
+  const json = (await res.json()) as NeynarFeedResponse;
+  return json;
 }

@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { useMiniKit } from "@coinbase/onchainkit/minikit";
 import styles from "./page.module.css";
 
+type TopCast = {
+  text: string;
+  hash: string;
+  timestamp: string;
+  likes: number;
+  recasts: number;
+  replies: number;
+  score: number;
+};
+
 type Stats = {
   fid: string;
   days: number;
@@ -12,18 +22,10 @@ type Stats = {
   totalRecasts: number;
   totalReplies: number;
   engagementScore: number;
-  topCast?: {
-    text: string;
-    hash: string;
-    timestamp: string;
-    likes: number;
-    recasts: number;
-    replies: number;
-    score: number;
-  } | null;
+  topCast: TopCast | null;
 };
 
-// ⬇️ GANTI INI dengan FID Farcaster kamu untuk testing di browser biasa
+// ganti ini dengan FID kamu untuk testing di browser biasa
 const DEFAULT_FID = "250425";
 
 export default function Home() {
@@ -31,28 +33,30 @@ export default function Home() {
 
   const [fid, setFid] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Beri tahu MiniKit kalau frame sudah siap (dibutuhkan saat jalan sebagai mini app)
+  // beri tahu MiniKit kalau frame siap saat dibuka sebagai mini app
   useEffect(() => {
     if (!isFrameReady) {
       setFrameReady();
     }
   }, [isFrameReady, setFrameReady]);
 
-  // Tentukan FID yang dipakai: dari context kalau ada, kalau tidak pakai DEFAULT_FID
+  // tentukan FID yang dipakai: context user (kalau ada) atau DEFAULT_FID
   useEffect(() => {
+    const rawContextFid = context?.user?.fid;
+
     const contextFid =
-      context?.user?.fid !== undefined && context?.user?.fid !== null
-        ? String(context.user.fid)
+      typeof rawContextFid === "number" || typeof rawContextFid === "string"
+        ? String(rawContextFid)
         : null;
 
     const fidToUse = contextFid ?? DEFAULT_FID;
     setFid(fidToUse);
   }, [context]);
 
-  // Fetch statistik tiap kali FID berubah
+  // fetch stats setiap kali FID berubah
   useEffect(() => {
     if (!fid) return;
 
@@ -63,18 +67,24 @@ export default function Home() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`/api/my-base-week?fid=${fid}`);
+        const res = await fetch(
+          `/api/my-base-week?fid=${encodeURIComponent(fid)}`
+        );
+
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);
         }
 
-        const json = await res.json();
+        const json = (await res.json()) as Stats;
+
         if (!cancelled) {
           setStats(json);
         }
-      } catch (e: any) {
+      } catch (err: unknown) {
         if (!cancelled) {
-          setError(e.message ?? "Unknown error");
+          const message =
+            err instanceof Error ? err.message : "Unknown error";
+          setError(message);
         }
       } finally {
         if (!cancelled) {
@@ -90,7 +100,6 @@ export default function Home() {
     };
   }, [fid]);
 
-  // Kalau FID belum siap sama sekali (context baru loading)
   if (!fid) {
     return (
       <main className={styles.container}>
@@ -151,13 +160,16 @@ function StatsCard({ stats }: { stats: Stats }) {
             <p className={styles.topCastText}>{stats.topCast.text}</p>
             <div className={styles.topCastMeta}>
               <span className={styles.metaItem}>
-                <span className={styles.emoji}>❤️</span> {stats.topCast.likes}
+                <span className={styles.emoji}>❤️</span>{" "}
+                {stats.topCast.likes}
               </span>
               <span className={styles.metaItem}>
-                <span className={styles.emoji}>🔁</span> {stats.topCast.recasts}
+                <span className={styles.emoji}>🔁</span>{" "}
+                {stats.topCast.recasts}
               </span>
               <span className={styles.metaItem}>
-                <span className={styles.emoji}>💬</span> {stats.topCast.replies}
+                <span className={styles.emoji}>💬</span>{" "}
+                {stats.topCast.replies}
               </span>
             </div>
           </>
