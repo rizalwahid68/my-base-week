@@ -14,6 +14,13 @@ type TopCast = {
   score: number;
 };
 
+type StatsUser = {
+  fid: string;
+  username: string;
+  displayName: string;
+  pfpUrl: string | null;
+};
+
 type Stats = {
   fid: string;
   days: number;
@@ -23,18 +30,26 @@ type Stats = {
   totalReplies: number;
   engagementScore: number;
   topCast: TopCast | null;
+  user?: StatsUser | null;
 };
 
-// ganti ini dengan FID kamu untuk testing di browser biasa
+// FID default buat testing di browser biasa
 const DEFAULT_FID = "250425";
 
+// URL publik mini app kamu (domain di Vercel)
+const APP_URL = "https://my-base-week.vercel.app";
+
 export default function Home() {
-  const { context, setFrameReady, isFrameReady } = useMiniKit();
+  // pakai as any supaya kita bisa ambil sdk tanpa ribut sama TypeScript
+  const miniKit = useMiniKit() as any;
+  const { context, setFrameReady, isFrameReady } = miniKit;
+  const sdk = miniKit.sdk as any;
 
   const [fid, setFid] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSharing, setIsSharing] = useState<boolean>(false);
 
   // beri tahu MiniKit kalau frame siap saat dibuka sebagai mini app
   useEffect(() => {
@@ -100,6 +115,37 @@ export default function Home() {
     };
   }, [fid]);
 
+  // handler untuk tombol "Share week"
+  const handleShareClick = async () => {
+    if (!stats) return;
+
+    setIsSharing(true);
+
+    try {
+      const text = buildShareText(stats);
+
+      const params = new URLSearchParams();
+      params.set("text", text);
+      // embed mini app supaya frame muncul di bawah cast
+      params.append("embeds[]", APP_URL);
+
+      const composerUrl = `https://warpcast.com/~/compose?${params.toString()}`;
+
+      // 1. Di dalam Base App / MiniKit → pakai sdk.actions.openUrl
+      if (sdk?.actions?.openUrl) {
+        await sdk.actions.openUrl({ url: composerUrl });
+      }
+      // 2. Fallback di browser biasa
+      else if (typeof window !== "undefined") {
+        window.open(composerUrl, "_blank", "noopener,noreferrer");
+      }
+    } catch (err) {
+      console.error("Failed to open share composer", err);
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   if (!fid) {
     return (
       <main className={styles.container}>
@@ -129,12 +175,43 @@ export default function Home() {
 
   return (
     <main className={styles.container}>
-      <StatsCard stats={stats} />
+      <StatsCard
+        stats={stats}
+        onShare={handleShareClick}
+        isSharing={isSharing}
+      />
     </main>
   );
 }
 
-function StatsCard({ stats }: { stats: Stats }) {
+function StatsCard({
+  stats,
+  onShare,
+  isSharing,
+}: {
+  stats: Stats;
+  onShare: () => void;
+  isSharing: boolean;
+}) {
+  const user = stats.user ?? undefined;
+
+  const initial =
+    user?.displayName?.[0] ??
+    user?.username?.[0]?.toUpperCase() ??
+    "F";
+
+  // ✅ Handler untuk buka cast di Warpcast
+  const handleTopCastClick = () => {
+    if (!stats.topCast?.hash) return;
+    
+    const castUrl = `https://warpcast.com/~/conversations/${stats.topCast.hash}`;
+    
+    // Buka di tab baru
+    if (typeof window !== "undefined") {
+      window.open(castUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -144,6 +221,26 @@ function StatsCard({ stats }: { stats: Stats }) {
             Last {stats.days} days on Farcaster
           </p>
         </div>
+
+        {user && (
+          <div className={styles.headerRight}>
+            <div className={styles.avatarWrapper}>
+              {user.pfpUrl ? (
+                <img
+                  src={user.pfpUrl}
+                  alt={user.username}
+                  className={styles.avatar}
+                />
+              ) : (
+                <div className={styles.avatarFallback}>{initial}</div>
+              )}
+            </div>
+            <div className={styles.userText}>
+              <span className={styles.userName}>{user.displayName}</span>
+              <span className={styles.userHandle}>@{user.username}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className={styles.statsGrid}>
@@ -153,7 +250,12 @@ function StatsCard({ stats }: { stats: Stats }) {
         <Stat label="Replies received" value={stats.totalReplies} />
       </div>
 
-      <div className={styles.topCast}>
+      {/* ✅ Tambahkan onClick dan cursor pointer */}
+      <div 
+        className={styles.topCast}
+        onClick={handleTopCastClick}
+        style={{ cursor: stats.topCast ? 'pointer' : 'default' }}
+      >
         <p className={styles.topCastLabel}>Top cast of the week</p>
         {stats.topCast ? (
           <>
@@ -179,6 +281,20 @@ function StatsCard({ stats }: { stats: Stats }) {
           </p>
         )}
       </div>
+
+      {/* Row untuk tombol share */}
+      <div className={styles.shareRow}>
+        <button
+          className={styles.shareButton}
+          onClick={onShare}
+          disabled={isSharing}
+        >
+          {isSharing ? "Opening composer…" : "Share"}
+        </button>
+        <p className={styles.shareHint}>
+          Makes a cast with your stats and a mini app link.
+        </p>
+      </div>
     </div>
   );
 }
@@ -190,4 +306,12 @@ function Stat({ label, value }: { label: string; value: number }) {
       <p className={styles.statValue}>{value}</p>
     </div>
   );
+}
+
+function buildShareText(stats: Stats): string {
+  return [
+    "my base week on farcaster 📊",
+    `${stats.totalCasts} casts · ${stats.totalLikes} likes · ${stats.totalRecasts} recasts · ${stats.totalReplies} replies`,
+    "check your own stats with this mini app 👇",
+  ].join("\n");
 }

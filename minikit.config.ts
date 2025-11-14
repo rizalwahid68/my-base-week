@@ -34,8 +34,8 @@ export const minikitConfig = {
     tags: ["farcaster", "analytics", "base-app", "stats"],
 
     // < 30 karakter (syarat Base)
-    tagline: "Your Farcaster week",
-    ogTitle: "My Base Week stats",
+    tagline: "Farcaster Weekly Stats",
+    ogTitle: "Weekly Stats",
     ogDescription:
       "See your last 7 days of Farcaster activity in one simple Base mini app.",
   },
