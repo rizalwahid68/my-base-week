@@ -35,7 +35,7 @@ type Stats = {
 };
 
 // FID default buat testing di browser biasa
-const DEFAULT_FID = "250425";
+const DEFAULT_FID = "1371298";
 
 // URL publik untuk halaman share (project kedua di Vercel)
 const APP_URL =
@@ -314,10 +314,10 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-function buildShareText(stats: Stats): string {
+function buildShareText(_stats: Stats): string {
   return [
-    "my base week on farcaster 📊",
-    `${stats.totalCasts} casts · ${stats.totalLikes} likes · ${stats.totalRecasts} recasts · ${stats.totalReplies} replies`,
-    "check your own stats with this mini app 👇",
+    "my stats on farcaster",
+    "see my last 7 days in one simple mini app",
+    "open it to check your own stats too",
   ].join("\n");
 }
