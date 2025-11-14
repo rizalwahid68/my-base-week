@@ -1,9 +1,9 @@
 // app/share/[fid]/page.tsx
 import type { Metadata, ResolvingMetadata } from "next";
+import { minikitConfig } from "../../../minikit.config";
 
 const APP_URL =
   process.env.NEXT_PUBLIC_SHARE_URL ?? "https://my-base-week-share.vercel.app";
-
 
 export async function generateMetadata(
   { params }: { params: Promise<{ fid: string }> },
@@ -14,6 +14,24 @@ export async function generateMetadata(
   const ogImageUrl = `${APP_URL}/api/og/${fid}`;
   const title = `Farcaster Weekly Stats – fid ${fid}`;
   const description = `Weekly Farcaster stats for fid ${fid}.`;
+
+  // JSON untuk meta fc:miniapp / fc:frame
+  const miniappEmbed = {
+    version: minikitConfig.miniapp.version,
+    imageUrl: ogImageUrl, // 👉 ini yang bikin embed pakai /api/og/[fid]
+    button: {
+      title: "Launch My Base Week",
+      action: {
+        type: "launch_frame",
+        name: "Launch My Base Week",
+        // url mini app UTAMA (biasanya my-base-week.vercel.app)
+        url: minikitConfig.miniapp.homeUrl,
+        // optional, kalau mau bisa ikut diset:
+        splashImageUrl: minikitConfig.miniapp.splashImageUrl,
+        splashBackgroundColor: minikitConfig.miniapp.splashBackgroundColor,
+      },
+    },
+  };
 
   return {
     title,
@@ -34,6 +52,12 @@ export async function generateMetadata(
       title,
       description,
       images: [ogImageUrl],
+    },
+    // 🔥 kunci supaya Warpcast/Base pakai gambar stats
+    other: {
+      "fc:miniapp": JSON.stringify(miniappEmbed),
+      // optional backward-compat
+      "fc:frame": JSON.stringify(miniappEmbed),
     },
   };
 }
