@@ -2,7 +2,8 @@
 import type { Metadata, ResolvingMetadata } from "next";
 
 const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://my-base-week.vercel.app";
+  process.env.NEXT_PUBLIC_SHARE_URL ?? "https://my-base-week-share.vercel.app";
+
 
 export async function generateMetadata(
   { params }: { params: Promise<{ fid: string }> },

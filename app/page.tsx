@@ -37,8 +37,10 @@ type Stats = {
 // FID default buat testing di browser biasa
 const DEFAULT_FID = "250425";
 
-// URL publik mini app kamu (domain di Vercel)
-const APP_URL = "https://my-base-week.vercel.app";
+// URL publik untuk halaman share (project kedua di Vercel)
+const APP_URL =
+  process.env.NEXT_PUBLIC_SHARE_URL ?? "https://my-base-week-share.vercel.app";
+
 
 export default function Home() {
   const { context, setFrameReady, isFrameReady } = useMiniKit();
