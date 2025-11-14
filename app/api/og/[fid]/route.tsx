@@ -242,6 +242,8 @@ export async function GET(
               gap: 18,
               width: "100%",
               marginTop: 8,
+              paddingLeft: 20,
+              paddingRight: 20,
             }}
           >
             {statItems.map((item) => (
@@ -294,6 +296,8 @@ export async function GET(
               gap: 6,
               width: "100%",
               marginTop: 14,
+              paddingLeft: 60,
+              paddingRight: 60,
             }}
           >
             <div
@@ -301,6 +305,7 @@ export async function GET(
                 fontSize: 16,
                 fontWeight: 600,
                 opacity: 0.97,
+                textAlign: "center",
               }}
             >
               Engagement score{" "}
@@ -310,6 +315,7 @@ export async function GET(
               style={{
                 fontSize: 13,
                 opacity: 0.9,
+                textAlign: "center",
               }}
             >
               my-base-week · base mini app
